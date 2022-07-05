@@ -8,11 +8,10 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import BasicModal from "../pages/Model";
 import { TextField } from "@mui/material";
 import { Button } from "@mui/material";
-
-export default function TagsTable(props) {
+import { BasicModal } from "../../components";
+export  function TagsTable(props) {
   const [rows, setrows] = useState([]);
   const [editObj, seteditObj] = useState({});
   const [model, setModel] = useState(false);

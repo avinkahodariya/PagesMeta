@@ -35,5 +35,7 @@ const PageSchema = new mongoose.Schema({
 },{
     timestamps: true
 })
+// const Page = mongoose.model('Page', PageSchema);
+// module.exports = Page;
 
 export default mongoose.models.Page || mongoose.model('Page',PageSchema)

@@ -7,11 +7,12 @@ export class AppController {
         return apps;
     }
 
-    static create = async (data) => {
+    static add = async (data) => {
         const result = await App.create({
             ...data,
             isActive: true
         })
+        console.log("🚀 ~ file: app.js ~ line 16 ~ AppController ~ create= ~ result", result)
         return result;
     }
 

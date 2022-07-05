@@ -16,7 +16,7 @@ const style = {
   p: 4,
 };
 
-export default function BasicModal(props) {
+export  function BasicModal(props) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => {setOpen(false);props.onClose(false)}

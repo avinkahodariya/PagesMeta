@@ -1,9 +1,9 @@
 import React,{useState} from "react";
-
 import "bootstrap/dist/css/bootstrap.css";
 import { Button, Card, TextField } from "@mui/material";
 import Select from "react-select";
-import TagsTable from "./TagsTable";
+import {TagsTable} from "../page-components";
+import MainCardWrapper from "../components/MainCardWrapper";
 
 const MetaPages = () => {
     const [add, setAdd] = useState(false)
@@ -14,10 +14,7 @@ const MetaPages = () => {
   ];
 
   return (
-    <div className="page m-5 p-5">
-      <div className=" m-auto">
-        <Card elevation={5} className="m-5 p-5 mb-3 pb-4 border  m-auto">
-          <div className="p-4 bg-dark text-white  m-auto">ADD META</div>
+    <MainCardWrapper title="ADD META">
           <div className="p-4 pt-2  mt-3  my-2  pb-0 m-auto border">
             <div className="d-flex justify-content-between">
               <div className="my-3 mt-0  dropbox">
@@ -43,12 +40,6 @@ const MetaPages = () => {
                     onChange={(e) => {
                       // handleEdit("parentPage", e);
                     }}
-                    styles={(provided, state) => ({
-                      menu: {
-                        zIndex: "99999999999999999999",
-                        color: "red",
-                      },
-                    })}
                   />
                 </div>
               </div>
@@ -94,7 +85,7 @@ const MetaPages = () => {
               <div className="py-3 w-100">
                 
                 <div>
-                  <TagsTable add = {add} setAdd={setAdd}/>
+                   <TagsTable add = {add} setAdd={setAdd}/>
                 </div>
               </div>
             </div>
@@ -102,9 +93,7 @@ const MetaPages = () => {
           <div className="my-2 w-100 d-flex justify-content-end mt-3 mb-0">
             <Button variant="contained" className="rounded-0">Add MEta DATA</Button>
           </div>
-        </Card>
-      </div>
-    </div>
+  </MainCardWrapper>
   );
 };
 
