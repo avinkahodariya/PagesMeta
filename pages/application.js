@@ -4,64 +4,71 @@ import InputLabel from "@mui/material/InputLabel";
 import { Button } from "@mui/material";
 import { BasicModal } from "../components";
 import React, { useState, useEffect } from "react";
-import { AddApplication, GetApplicationListHook, UpdateApplicationHook,RemoveApplicationHook } from "../hooks";
+import {
+  AddApplication,
+  GetApplicationListHook,
+  UpdateApplicationHook,
+  RemoveApplicationHook,
+} from "../hooks";
 import MainCardWrapper from "../components/MainCardWrapper";
 import { ApplicationTable } from "../components/ApplicationTable";
 import AddEdit from "../page-components/applications/AddEdit";
+import { DeleteModel } from "../components/DeleteModel";
+import { Notification } from "../components/Notification";
 
 function Application() {
   const [model, setModel] = useState(false);
-  const [tableData,setTableData]=useState([]);
-  const [editObj,seteditObj]=useState({})
+  const [tableData, setTableData] = useState([]);
+  const [editObj, seteditObj] = useState({});
+  const [deleteModel, setdeleteModel] = useState("");
 
-  const { data, loading } = GetApplicationListHook();
+  const { data, getApplication } = GetApplicationListHook();
   const { InsertApp } = AddApplication();
-  const { update }=UpdateApplicationHook();
-  const {removeApplication}=RemoveApplicationHook();
+  const { update } = UpdateApplicationHook();
+  const { removeApplication } = RemoveApplicationHook();
 
+  useEffect(() => {
+    let formatedData = data?.map((d) => {
+      return createData(d._id, d.name, d.isActive, d.createdAt, d.description);
+    });
+    setTableData(formatedData);
+  }, [data]);
 
-  useEffect(()=>{
-   let formatedData =  data.map((d)=>{
-       return createData(d._id, d.name, d.isActive, d.createdAt)
-    })
-    setTableData(formatedData)
-  },[data])
-
-  function createData(id, applicationName, active, created) {
-    return { id, applicationName, active, created };
+  function createData(_id, name, isActive, createdAt, description) {
+    return { _id, name, isActive, createdAt, description };
   }
 
-  const editRow = (id) => {
+  const editRow = (_id) => {
     setModel(true);
-    let indexRow = tableData.findIndex((data) => data.id == id);
+    let indexRow = tableData.findIndex((data) => data._id == _id);
     indexRow >= 0 && seteditObj(tableData[indexRow]);
   };
 
-  const deleteRow = (id) => {
-    // let deletdRow = tableData.filter((d) => d.id !== id);
-    // SetRawData(deletdRow);
-    removeApplication(id)
-
+  const deleteRow = (_id) => {
+    setdeleteModel(_id);
   };
 
   const handleChange = (e) => {
-    let obj = {...editObj};
-    obj[e.target.name]= e.target.value;
-    seteditObj({...obj})
-  }
-  
-
-  const addOrEdit = () => {
-    if (editObj.id) {
-      let updateObj = {};
-      updateObj.name = editObj.applicationName
-      update(editObj.id,updateObj)
-    } else {
-      InsertApp({name:editObj.applicationName})
-    }
+    let obj = { ...editObj };
+    obj[e.target.name] = e.target.value;
+    seteditObj({ ...obj });
   };
 
-
+  const addOrEdit = async () => {
+    let updateObj = {};
+    updateObj.name = editObj.name;
+    updateObj.description = editObj.description;
+    if (editObj._id) {
+      await update(editObj._id, updateObj);
+      Notification("Application Updated");
+    } else {
+      await InsertApp({ ...updateObj });
+      Notification("Application Added");
+    }
+    await getApplication();
+    setModel(false);
+    seteditObj({});
+  };
 
   return (
     <MainCardWrapper title="Add Applications">
@@ -71,7 +78,7 @@ function Application() {
           className="my-2 mx-0  px-5 rounded-0"
           onClick={() => {
             setModel(true);
-            seteditObj({})
+            seteditObj({});
           }}>
           Add
         </Button>
@@ -81,7 +88,26 @@ function Application() {
         editRow={editRow}
         deleteRow={deleteRow}
       />
-      <AddEdit model={model} setModel={setModel} editRow={editRow} deleteRow={deleteRow} editObj={editObj} handleChange={handleChange} addOrEdit={addOrEdit}/>
+      <AddEdit
+        model={model}
+        setModel={setModel}
+        editRow={editRow}
+        deleteRow={deleteRow}
+        editObj={editObj}
+        handleChange={handleChange}
+        addOrEdit={addOrEdit}
+      />
+      <DeleteModel
+        open={deleteModel}
+        onClose={setdeleteModel}
+        remove={async () => {
+          await removeApplication(deleteModel);
+          setdeleteModel(false);
+          setdeleteModel(false);
+          Notification("Application Deleted Sucessfully");
+          await getApplication();
+        }}
+      />
     </MainCardWrapper>
   );
 }

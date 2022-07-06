@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { ApplicationsService } from "../utility/services";
+import { PagesService } from "../utility/services";
 
-export const GetApplicationListHook = () => {
+export const GetPagesListHook = () => {
   const [data, setData] = useState([]);
-  const [reftch, setrefetch] = useState(false);
+  const [refetch, setRefetch] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -11,7 +11,7 @@ export const GetApplicationListHook = () => {
     const fetch = async () => {
       try {
         setLoading(true);
-        const result = await ApplicationsService.get();
+        const result = await PagesService.get();
         setData(result);
       } catch (e) {
         setError(e);
@@ -21,16 +21,15 @@ export const GetApplicationListHook = () => {
     };
 
     fetch();
-  }, [reftch]);
+  }, [refetch]);
 
-  const getApplication = () => {
-    setrefetch(!reftch);
+  const getPages = () => {
+    setRefetch(!refetch);
   };
-
-  return { data, loading, error, getApplication };
+  return { data, loading, error, getPages };
 };
 
-export const UpdateApplicationHook = () => {
+export const UpdatePagesHook = () => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -39,7 +38,7 @@ export const UpdateApplicationHook = () => {
     const fetch = async () => {
       try {
         setLoading(true);
-        const result = await ApplicationsService.update(data.id, data.dataObj);
+        const result = await PagesService.update(data.id, data.dataObj);
         setData(result);
       } catch (e) {
         setError(e);
@@ -51,14 +50,14 @@ export const UpdateApplicationHook = () => {
     fetch();
   }, [data]);
 
-  const update = (id, dataObj) => {
+  const updatePage = (id, dataObj) => {
     setData({ dataObj, id });
   };
 
-  return { data, loading, error, update };
+  return { data, loading, error, updatePage };
 };
 
-export const AddApplication = () => {
+export const AddPageHook = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -67,11 +66,7 @@ export const AddApplication = () => {
     const add = async () => {
       try {
         setLoading(true);
-        const result = await ApplicationsService.add(data);
-        console.log(
-          "🚀 ~ file: application.js ~ line 66 ~ add ~ result",
-          result
-        );
+        const result = await PagesService.add(data);
         setData(result);
       } catch (e) {
         setError(e);
@@ -82,14 +77,14 @@ export const AddApplication = () => {
     add();
   }, [data]);
 
-  const InsertApp = (dataObj) => {
+  const addPage = (dataObj) => {
     return setData(dataObj);
   };
 
-  return { data, loading, error, InsertApp };
+  return { data, loading, error, addPage };
 };
 
-export const RemoveApplicationHook = () => {
+export const RemovePageHook = () => {
   const [data, setData] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -98,11 +93,7 @@ export const RemoveApplicationHook = () => {
     const remove = async () => {
       try {
         setLoading(true);
-        const result = await ApplicationsService.remove(data);
-        console.log(
-          "🚀 ~ file: application.js ~ line 66 ~ add ~ result",
-          result
-        );
+        const result = await PagesService.remove(data);
         setData(result);
       } catch (e) {
         setError(e);
@@ -113,7 +104,7 @@ export const RemoveApplicationHook = () => {
     remove();
   }, [data]);
 
-  const removeApplication = (id) => {
+  const removePage = (id) => {
     return setData(id);
   };
 
@@ -121,6 +112,6 @@ export const RemoveApplicationHook = () => {
     data,
     loading,
     error,
-    removeApplication,
+    removePage,
   };
 };

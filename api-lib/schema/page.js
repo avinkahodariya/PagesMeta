@@ -1,41 +1,44 @@
-import mongoose from 'mongoose'
+import mongoose from "mongoose";
 
-const PageSchema = new mongoose.Schema({
+const PageSchema = new mongoose.Schema(
+  {
     pageKey: {
-        type: String,
-        lowercase: true,
-        required: [true,'Please provide a name for this page.'],
+      type: String,
+      lowercase: true,
+      required: [true, "Please provide a name for this page."],
     },
     isActive: {
-        type: Boolean,
-        default: true
+      type: Boolean,
+      default: true,
     },
     app: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: "Application"
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "Application",
     },
     keywords: {
-        type: String
+      type: String,
     },
     title: {
-        type: String,
+      type: String,
     },
     description: {
-        type: String
+      type: String,
     },
     parent: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Page"
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Page",
     },
-    metadata: [{
+    metadata: [
+      {
         name: String,
-        value: String
-    }],
-},{
-    timestamps: true
-})
-// const Page = mongoose.model('Page', PageSchema);
-// module.exports = Page;
+        value: String,
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
 
-export default mongoose.models.Page || mongoose.model('Page',PageSchema)
+export default mongoose.models.Page || mongoose.model("Page", PageSchema);

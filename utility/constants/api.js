@@ -1,6 +1,6 @@
 export const APIPath = {
-    baseURL : '/api',
-    applications : 'applications',
-    add:'applications/add',
-    pages:'page'
-}
+   baseURL: "/api",
+   applications: "applications",
+   page: "pages",
+   meta: "meta",
+};

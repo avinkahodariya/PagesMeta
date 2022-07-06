@@ -1,223 +1,150 @@
 import React, { useState, useEffect } from "react";
 import { BasicTable } from "../components";
-import "bootstrap/dist/css/bootstrap.css";
-import {
-  Button,
-  TextField,
-  Card,
-} from "@mui/material";
-import AddBoxIcon from "@mui/icons-material/AddBox";
-import {BasicModal} from "../components";
-import Select from "react-select";
+import { Button } from "@mui/material";
+import { GetApplicationListHook } from "../hooks/application";
+import { DeleteModel } from "../components/DeleteModel";
+import { Notification } from "../components/Notification";
 import MainCardWrapper from "../components/MainCardWrapper";
+import AddBoxIcon from "@mui/icons-material/AddBox";
+import {
+  AddPageHook,
+  GetPagesListHook,
+  RemovePageHook,
+  UpdatePagesHook,
+} from "../hooks/pages";
+import "bootstrap/dist/css/bootstrap.css";
+import AddEditPages from "../page-components/Pages/AddEditPages";
 
 const Pages = () => {
   const [rowsData, SetRawData] = useState([]);
-  const [Model, setModel] = useState(false);
+  const [model, setModel] = useState(false);
+  const [applications, setApplications] = useState([]);
   const [editModel, setEditModel] = useState(false);
   const [editObj, seteditObj] = useState({});
+  const [deleteModel, setdeleteModel] = useState("false");
+  const [deleteID, setDeleteID] = useState("");
+
+  const { data: pages, getPages } = GetPagesListHook();
+  const { data: applicationData } = GetApplicationListHook();
+  const { addPage } = AddPageHook();
+  const { updatePage } = UpdatePagesHook();
+  const { removePage } = RemovePageHook();
+
+  useEffect(() => {
+    let newData = pages.map((d) => {
+      return createData(d._id, d.pageKey, d.metadata, d.app, d.parent, d);
+    });
+    SetRawData(newData);
+  }, [pages]);
+
+  function createData(_id, pageName, metaData, app, parent = "", page) {
+    return {
+      _id,
+      pageName,
+      metaData,
+      app,
+      parent,
+      name: pageName,
+      label: pageName,
+      page,
+    };
+  }
+
+  useEffect(() => {
+    let appArray = applicationData.map((d) => {
+      return { _id: d._id, label: d.name, value: d.value, app: d };
+    });
+    setApplications(appArray);
+  }, [applicationData]);
 
   useEffect(() => {
     if (!editModel) seteditObj({});
-  }, [editModel, Model]);
+  }, [editModel, model]);
 
-  const handleChange = (event) => {
-    setAge(event.target.value);
-  };
-
-  const options = [
-    { value: "content", label: "Content" },
-    { value: "add", label: "Add" },
-    { value: "edit", label: "Edit" },
-  ];
-
-  const applicationName = [
-    { value: "amazon", label: "amazon" },
-    { value: "flipkart", label: "flipkart" },
-    { value: "snapdeal", label: "snapdeal" },
-  ];
-
-  const rows = [
-    createData(0, "add page", "flipkart", "content"),
-    createData(1, "Ice cream sandwich", "flipkart", "add"),
-    createData(2, "shoes", "amazon", "add"),
-    createData(3, "clothes", "myntra", "add"),
-  ];
-
-  function createData(id, pageName, applicationName, parentPage) {
-    return { id, pageName, applicationName, parentPage };
-  }
-
-  const editRow = (id) => {
+  const editRow = (_id) => {
     setEditModel(true);
-    let indexRow = rowsData.findIndex((data) => data.id == id);
+    setModel(true);
+    let indexRow = rowsData.findIndex((data) => data._id == _id);
     indexRow >= 0 && seteditObj(rowsData[indexRow]);
   };
 
-  const deleteRow = (id) => {
-    let deletdRow = rowsData.filter((d)=>d.id!==id);
-    SetRawData(deletdRow)
+  const deleteRow = (_id) => {
+    setDeleteID(_id);
+    setdeleteModel("true");
   };
 
-  const handleEdit = (e,data) => {
+  const handleEdit = (e, data) => {
     let obj = { ...editObj };
     if (data) {
-      obj[e] = data.value;
+      obj[e] = data.label;
+      if (e == "app") {
+        obj.app = data.app;
+      } else {
+        obj.parent = data.page;
+      }
     } else {
       obj[e.target.name] = e.target.value;
     }
-
     seteditObj({
       ...obj,
     });
   };
 
-  const saveData = (id) => {
-    let indexRow = rowsData.findIndex((data) => data.id == id);
-    if (!Model) {
-      rowsData[indexRow] = { ...editObj };
-    }
-    if (Model) {
-      let obj = { ...editObj };
-      obj.id = rows.length;
-      rowsData.push({ ...obj });
-      SetRawData(rowsData);
-      setModel(false);
-      seteditObj({});
+  const addNewPage = () => {
+    let obj = {
+      pageKey: editObj.pageName,
+      app: editObj.app._id,
+      parent: editObj.parent._id,
+    };
+    if (editModel) {
+      updatePage(editObj._id, obj);
+      Notification("Page Updated");
     } else {
-      SetRawData(rowsData);
-      setEditModel(false);
-      seteditObj({});
+      addPage(obj);
+      Notification("Page Added");
     }
+    setEditModel(false);
+    setModel(false);
+    getPages();
   };
 
-  useEffect(() => {
-    SetRawData(rows);
-  }, []);
-
   return (
-    <MainCardWrapper title='Pages'>
-   
-          <p className="text-end mt-3">
-            <Button
-              variant="contained"
-              onClick={() => {
-                setModel(true);
-              }}
-              className='rounded-0'
-            >
-              <AddBoxIcon className="" />
-              <span className="mx-2">Add Page</span>
-            </Button>
-          </p>
-          <div className="border card">
-            <BasicTable
-              rowsData={rowsData}
-              editRow={editRow}
-              deleteRow={deleteRow}
-            />
-          </div>
-
-
-           {/* <EditPageModel /> */}
-
-         
-          <BasicModal open={Model} onClose={setModel}>
-            <div className="my-2">
-              <div> Page Name:</div>
-              <TextField
-                id="standard-helperText"
-                // label=" Page Name"
-                variant="standard"
-                name="pageName"
-                className="w-100 "
-                onChange={handleEdit}
-                value={editObj?.pageName||''}
-              />
-            </div>
-            <div className="my-3">
-              <div className="my-2"> Application Name:</div>
-              <Select
-                options={applicationName}
-                className=""
-                name="applicationName"
-               
-                onChange={(e) => {
-                  handleEdit("applicationName", e);
-                }}
-              />
-            </div>
-            <div className="my-3">
-              <div className="my-2"> Parent Page:</div>
-              <Select
-                options={options}
-                className=""
-                onChange={(e) => {
-                  handleEdit("parentPage", e);
-                }}
-              />
-            </div>
-            <Button
-              variant="contained"
-              className="w-100 text-right p-2 mt-3"
-              onClick={saveData}
-            >
-              {" "}
-              ADD{" "}
-            </Button>
-          </BasicModal>
-          <BasicModal open={editModel} onClose={setEditModel}>
-            <div className="my-2">
-              <div> Page Name:</div>
-              <TextField
-                id="standard-helperText"
-                variant="standard"
-                className="w-100 "
-                name="pageName"
-                value={editObj?.pageName||''}
-                onChange={handleEdit}
-              />
-            </div>
-            <div className="my-3">
-              <div className="my-2"> Application Name:</div>
-              <Select
-                options={applicationName}
-                className=""
-                name="applicationName"
-                defaultValue={{
-                  label: editObj?.applicationName||'',
-                  value: editObj?.applicationName||'',
-                }}
-                onChange={(e) => {
-                  handleEdit("applicationName", e);
-                }}
-              />
-            </div>
-            <div className="my-3">
-              <div className="my-2"> Paent Page:</div>
-              <Select
-                options={options}
-                className=""
-                defaultValue={{
-                  label: editObj?.parentPage||'',
-                  value: editObj?.parentPage||'',
-                }}
-                onChange={(e) => {
-                  handleEdit("parentPage", e);
-                }}
-              />
-            </div>
-            <Button
-              variant="contained"
-              className="w-100 text-right p-2 mt-3"
-              onClick={() => {
-                saveData(editObj.id);
-              }}
-            >
-              Save
-            </Button>
-          </BasicModal>
-
+    <MainCardWrapper title="Pages">
+      <p className="text-end mt-3">
+        <Button
+          variant="contained"
+          onClick={() => {
+            setModel(true);
+          }}
+          className="rounded-0">
+          <AddBoxIcon className="" />
+          <span className="mx-2">Add Page</span>
+        </Button>
+      </p>
+      <div className="border card">
+        <BasicTable
+          rowsData={rowsData}
+          editRow={editRow}
+          deleteRow={deleteRow}
+        />
+      </div>
+      <AddEditPages
+        model={model}
+        setModel={setModel}
+        handleEdit={handleEdit}
+        editObj={editObj}
+        applications={applications}
+        rowsData={rowsData}
+        addNewPage={addNewPage}
+        editModel={editModel}
+      />
+      <DeleteModel
+        open={deleteModel == "true" ? true : false}
+        onClose={setdeleteModel}
+        remove={() => {
+          removePage(deleteID);
+        }}
+      />
     </MainCardWrapper>
   );
 };
