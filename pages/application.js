@@ -4,7 +4,7 @@ import InputLabel from "@mui/material/InputLabel";
 import { Button } from "@mui/material";
 import { BasicModal } from "../components";
 import React, { useState, useEffect } from "react";
-import { AddApplication, GetApplicationListHook } from "../hooks";
+import { AddApplication, GetApplicationListHook, UpdateApplicationHook,RemoveApplicationHook } from "../hooks";
 import MainCardWrapper from "../components/MainCardWrapper";
 import { ApplicationTable } from "../components/ApplicationTable";
 import AddEdit from "../page-components/applications/AddEdit";
@@ -16,7 +16,8 @@ function Application() {
 
   const { data, loading } = GetApplicationListHook();
   const { InsertApp } = AddApplication();
-  console.log(data, loading);
+  const { update }=UpdateApplicationHook();
+  const {removeApplication}=RemoveApplicationHook();
 
 
   useEffect(()=>{
@@ -37,8 +38,10 @@ function Application() {
   };
 
   const deleteRow = (id) => {
-    let deletdRow = tableData.filter((d) => d.id !== id);
-    SetRawData(deletdRow);
+    // let deletdRow = tableData.filter((d) => d.id !== id);
+    // SetRawData(deletdRow);
+    removeApplication(id)
+
   };
 
   const handleChange = (e) => {
@@ -50,8 +53,11 @@ function Application() {
 
   const addOrEdit = () => {
     if (editObj.id) {
+      let updateObj = {};
+      updateObj.name = editObj.applicationName
+      update(editObj.id,updateObj)
     } else {
-      InsertApp(editObj)
+      InsertApp({name:editObj.applicationName})
     }
   };
 
