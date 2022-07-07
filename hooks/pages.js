@@ -38,7 +38,8 @@ export const UpdatePagesHook = () => {
     const fetch = async () => {
       try {
         setLoading(true);
-        const result = await PagesService.update(data.id, data.dataObj);
+        const result =
+          data.id && (await PagesService.update(data.id, data.dataObj));
         setData(result);
       } catch (e) {
         setError(e);
@@ -46,7 +47,6 @@ export const UpdatePagesHook = () => {
         setLoading(false);
       }
     };
-
     fetch();
   }, [data]);
 
@@ -58,7 +58,7 @@ export const UpdatePagesHook = () => {
 };
 
 export const AddPageHook = () => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -66,7 +66,7 @@ export const AddPageHook = () => {
     const add = async () => {
       try {
         setLoading(true);
-        const result = await PagesService.add(data);
+        const result = data && (await PagesService.add(data));
         setData(result);
       } catch (e) {
         setError(e);
@@ -93,7 +93,7 @@ export const RemovePageHook = () => {
     const remove = async () => {
       try {
         setLoading(true);
-        const result = await PagesService.remove(data);
+        const result = data & (await PagesService.remove(data));
         setData(result);
       } catch (e) {
         setError(e);

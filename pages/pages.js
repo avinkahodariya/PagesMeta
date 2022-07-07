@@ -32,20 +32,40 @@ const Pages = () => {
 
   useEffect(() => {
     let newData = pages.map((d) => {
-      return createData(d._id, d.pageKey, d.metadata, d.app, d.parent, d);
+      return createData(
+        d._id,
+        d.pageKey,
+        d.metadata,
+        d.app,
+        d.parent,
+        d.title,
+        d.description,
+        d
+      );
     });
     SetRawData(newData);
   }, [pages]);
 
-  function createData(_id, pageName, metaData, app, parent = "", page) {
+  function createData(
+    _id,
+    pageName,
+    metadata,
+    app,
+    parent = "",
+    title,
+    description,
+    page
+  ) {
     return {
       _id,
       pageName,
-      metaData,
+      metadata,
       app,
       parent,
       name: pageName,
       label: pageName,
+      title,
+      description,
       page,
     };
   }
@@ -58,7 +78,9 @@ const Pages = () => {
   }, [applicationData]);
 
   useEffect(() => {
-    if (!editModel) seteditObj({});
+    if (!editModel) {
+      seteditObj({});
+    }
   }, [editModel, model]);
 
   const editRow = (_id) => {
@@ -71,6 +93,7 @@ const Pages = () => {
   const deleteRow = (_id) => {
     setDeleteID(_id);
     setdeleteModel("true");
+    getPages();
   };
 
   const handleEdit = (e, data) => {
@@ -90,22 +113,25 @@ const Pages = () => {
     });
   };
 
-  const addNewPage = () => {
+  const addNewPage = async () => {
     let obj = {
       pageKey: editObj.pageName,
       app: editObj.app._id,
       parent: editObj.parent._id,
+      description: editObj.description || "",
+      metadata: editObj.metadata,
+      title: editObj.title || "",
     };
     if (editModel) {
-      updatePage(editObj._id, obj);
+      await updatePage(editObj._id, obj);
       Notification("Page Updated");
     } else {
-      addPage(obj);
+      await addPage(obj);
       Notification("Page Added");
     }
     setEditModel(false);
     setModel(false);
-    getPages();
+    await getPages();
   };
 
   return (
@@ -130,19 +156,23 @@ const Pages = () => {
       </div>
       <AddEditPages
         model={model}
-        setModel={setModel}
+        setModel={() => {
+          setModel(false);
+          setEditModel(false);
+        }}
         handleEdit={handleEdit}
         editObj={editObj}
         applications={applications}
         rowsData={rowsData}
         addNewPage={addNewPage}
         editModel={editModel}
+        seteditObj={seteditObj}
       />
       <DeleteModel
         open={deleteModel == "true" ? true : false}
         onClose={setdeleteModel}
         remove={() => {
-          removePage(deleteID);
+          deleteID && removePage(deleteID);
         }}
       />
     </MainCardWrapper>

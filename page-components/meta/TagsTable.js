@@ -12,62 +12,66 @@ import { TextField } from "@mui/material";
 import { Button } from "@mui/material";
 import { BasicModal } from "../../components";
 export  function TagsTable(props) {
-  const [rows, setrows] = useState([]);
-  const [editObj, seteditObj] = useState({});
+  const [tagsData, setTagsData] = useState([]);
+  const [tagRowObj, setTagRowObj] = useState({});
   const [model, setModel] = useState(false);
 
   useEffect(() => {
-    console.log("props.add", props.add);
     props.add && setModel(true);
-    props.add && seteditObj({});
+    props.add && setTagRowObj({});
   }, [props.add]);
 
-  function createData(name, value, id) {
-    return { name, value, id };
+  function createData(name, value, _id) {
+    return { name, value, _id };
   }
 
-  const rowsData = [
-    createData("Frozen yoghurt", 159, 0),
-    createData("Ice cream sandwich", 159, 1),
-    createData("Eclair", 262, 2),
-    createData("Cupcake", 305, 3),
-    createData("Gingerbread", 21, 4),
-  ];
-  useEffect(() => {
-    setrows(rowsData);
-  }, []);
+  useEffect(() => {}, [props.meta]);
 
-  const editRow = (id) => {
-    rows.map((d) => {
-      if (d.id == id) {
-        seteditObj({ ...d });
+  useEffect(() => {
+    setTagsData(props.meta);
+  }, [props.meta]);
+
+  const editRow = (_id) => {
+    tagsData.map((d) => {
+      if (d._id == _id) {
+        setTagRowObj({ ...d });
       }
     });
     setModel(true);
   };
 
   const handleChange = (e) => {
-    let obj = { ...editObj };
+    let obj = { ...tagRowObj };
     obj[e.target.name] = e.target.value;
-    seteditObj(obj);
+    setTagRowObj(obj);
   };
 
-  const save = (id) => {
-    if (!id) {
-      rows.push({ ...editObj, id: rows.length });
+  const save = (_id) => {
+    let tagRow = [...tagsData];
+    if (!_id) {
+      tagRow.push({ ...tagRowObj, _id: tagsData.length });
     } else {
-      let index = rows.findIndex((data) => data.id == id);
+      let index = tagRow.findIndex((data) => data._id == _id);
       if (index > 0) {
-        rows[index] = { ...editObj };
+        tagRow[index] = { ...tagRowObj };
       }
-      setrows(rows);
-      setModel(false);
     }
+    setTagsData(tagRow);
+    gotoPageMeta(tagRow);
+    setModel(false);
   };
 
-  const deleteRow = (id) => {
-    let newRow = rows.filter((d) => d.id !== id);
-    setrows(newRow);
+  const deleteRow = (_id) => {
+    let newRow = tagsData.filter((d) => d._id !== _id);
+    setTagsData(newRow);
+    gotoPageMeta(newRow);
+  };
+
+  const gotoPageMeta = (rowTag) => {
+    let withoutIDTag = rowTag.map((d) => {
+      return { name: d.name, value: d.value };
+    });
+    props.seteditObj({ ...props.editObj, metadata: withoutIDTag });
   };
 
   return (
@@ -83,12 +87,8 @@ export  function TagsTable(props) {
           </TableRow>
         </TableHead>
         <TableBody className="border">
-          {rows?.map((row) => (
-            <TableRow
-              key={row.name}
-              className="border"
-              //   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
+          {tagsData?.map((row) => (
+            <TableRow key={row.name} className="border">
               <TableCell className="border" component="th" scope="row">
                 {row.name}
               </TableCell>
@@ -98,13 +98,12 @@ export  function TagsTable(props) {
               <TableCell className="border" align="right">
                 <EditIcon
                   onClick={() => {
-                    editRow(row.id);
+                    editRow(row._id);
                   }}
                 />
-
                 <DeleteIcon
                   onClick={() => {
-                    deleteRow(row.id);
+                    deleteRow(row._id);
                   }}
                 />
               </TableCell>
@@ -117,8 +116,7 @@ export  function TagsTable(props) {
         onClose={() => {
           setModel();
           props.setAdd(false);
-        }}
-      >
+        }}>
         <div className="bg-dark text-white p-2 my-3">
           {" "}
           {props.add ? "Add Tags" : "Edit Tags"}
@@ -128,7 +126,7 @@ export  function TagsTable(props) {
           aria-label="empty textarea"
           className="my-2 w-100"
           variant="standard"
-          value={editObj.name}
+          value={tagRowObj.name}
           name="name"
           onChange={handleChange}
         />
@@ -137,7 +135,7 @@ export  function TagsTable(props) {
           aria-label="empty textarea"
           className="my-2 w-100"
           variant="standard"
-          value={editObj.value}
+          value={tagRowObj.value}
           name="value"
           onChange={handleChange}
         />
@@ -146,9 +144,8 @@ export  function TagsTable(props) {
             variant="contained"
             className="w-25 mx-2   rounded-0 "
             onClick={() => {
-              save(editObj.id);
-            }}
-          >
+              save(tagRowObj._id);
+            }}>
             Save
           </Button>
           <Button
@@ -157,8 +154,7 @@ export  function TagsTable(props) {
             onClick={() => {
               setModel(false);
               props.setAdd(false);
-            }}
-          >
+            }}>
             Cancel
           </Button>
         </div>

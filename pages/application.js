@@ -1,9 +1,8 @@
-import TextField from "@mui/material/TextField";
-import "bootstrap/dist/css/bootstrap.css";
-import InputLabel from "@mui/material/InputLabel";
-import { Button } from "@mui/material";
-import { BasicModal } from "../components";
 import React, { useState, useEffect } from "react";
+import { Button } from "@mui/material";
+import { DeleteModel } from "../components/DeleteModel";
+import { Notification } from "../components/Notification";
+import { ApplicationTable } from "../components/ApplicationTable";
 import {
   AddApplication,
   GetApplicationListHook,
@@ -11,10 +10,8 @@ import {
   RemoveApplicationHook,
 } from "../hooks";
 import MainCardWrapper from "../components/MainCardWrapper";
-import { ApplicationTable } from "../components/ApplicationTable";
 import AddEdit from "../page-components/applications/AddEdit";
-import { DeleteModel } from "../components/DeleteModel";
-import { Notification } from "../components/Notification";
+import "bootstrap/dist/css/bootstrap.css";
 
 function Application() {
   const [model, setModel] = useState(false);

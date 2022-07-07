@@ -1,10 +1,7 @@
 import React from "react";
 import { BasicModal } from "./Model";
 import { Button } from "@mui/material";
-import { RemovePageHook } from "../hooks/pages";
 export const DeleteModel = ({ open, onClose, remove }) => {
-  // const { removePage } = RemovePageHook();
-
   return (
     <div>
       <BasicModal open={open} onClose={onClose} className="p-2 py-4">
@@ -15,12 +12,7 @@ export const DeleteModel = ({ open, onClose, remove }) => {
             className="bg-success mx-2 my-2 w-25"
             onClick={() => {
               onClose("delete");
-              // console.log(
-              //   "🚀 ~ file: pages.js ~ line 84 ~ deleteRow ~ _id",
-              //   deleteID
-              // );
               remove();
-              // removePage(deleteID);
             }}>
             Yes
           </Button>

@@ -9,10 +9,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 export function BasicTable(props) {
-  console.log(
-    "🚀 ~ file: Table.js ~ line 12 ~ BasicTable ~ props",
-    props.rowsData
-  );
+
   return (
     <TableContainer>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">

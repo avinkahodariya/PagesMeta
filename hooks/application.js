@@ -68,10 +68,7 @@ export const AddApplication = () => {
       try {
         setLoading(true);
         const result = await ApplicationsService.add(data);
-        console.log(
-          "🚀 ~ file: application.js ~ line 66 ~ add ~ result",
-          result
-        );
+
         setData(result);
       } catch (e) {
         setError(e);
@@ -99,10 +96,6 @@ export const RemoveApplicationHook = () => {
       try {
         setLoading(true);
         const result = await ApplicationsService.remove(data);
-        console.log(
-          "🚀 ~ file: application.js ~ line 66 ~ add ~ result",
-          result
-        );
         setData(result);
       } catch (e) {
         setError(e);
