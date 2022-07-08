@@ -32,7 +32,7 @@ const AddEditPages = ({
       <BasicModal
         open={model}
         onClose={setModel}
-        styleParent={{ width: "80%", height: "500px", overflowY: "scroll" }}>
+        styleParent={{ width: "50%", height: "500px", overflowY: "scroll" }}>
         <div className="row">
           <div className="my-2 col-6">
             <div> Page Name:</div>

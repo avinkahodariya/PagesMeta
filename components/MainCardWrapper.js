@@ -4,7 +4,7 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 const MainCardWrapper = (props) => {
   return (
-    <div className="page m-5 p-5">
+    <div className="page m-5">
       <div className=" m-auto">
         <div className="my-3 text-primary " onClick={props.onClick}>
           <span className="back-hover p-3">
