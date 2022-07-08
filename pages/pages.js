@@ -123,6 +123,12 @@ const Pages = () => {
       metadata: editObj.metadata,
       title: editObj.title || "",
     };
+   obj.metadata = obj.metadata.map((d) => {
+       return {
+           name: d.name,
+           value: d.value,
+       };
+   });
     if (editModel) {
       await updatePage(editObj._id, obj);
       Notification("Page Updated");

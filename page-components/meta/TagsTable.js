@@ -32,46 +32,46 @@ export  function TagsTable(props) {
   }, [props.meta]);
 
   const editRow = (_id) => {
-    tagsData.map((d) => {
-      if (d._id == _id) {
-        setTagRowObj({ ...d });
-      }
-    });
-    setModel(true);
+      tagsData.map((d) => {
+          if (d._id == _id) {
+              setTagRowObj({ ...d });
+          }
+      });
+      setModel(true);
   };
 
   const handleChange = (e) => {
-    let obj = { ...tagRowObj };
-    obj[e.target.name] = e.target.value;
-    setTagRowObj(obj);
+      let obj = { ...tagRowObj };
+      obj[e.target.name] = e.target.value;
+      setTagRowObj(obj);
   };
 
   const save = (_id) => {
-    let tagRow = [...tagsData];
-    if (!_id) {
-      tagRow.push({ ...tagRowObj, _id: tagsData.length });
-    } else {
-      let index = tagRow.findIndex((data) => data._id == _id);
-      if (index > 0) {
-        tagRow[index] = { ...tagRowObj };
+      let tagRow = [...tagsData];
+      if (!_id && _id !== 0) {
+          tagRow.push({ ...tagRowObj, _id: tagsData.length });
+      } else {
+          let index = tagRow.findIndex((data) => data._id == _id);
+          if (index >= 0) {
+              tagRow[index] = { ...tagRowObj };
+          }
       }
-    }
-    setTagsData(tagRow);
-    gotoPageMeta(tagRow);
-    setModel(false);
+      setTagsData(tagRow);
+      gotoPageMeta(tagRow);
+      setModel(false);
   };
 
   const deleteRow = (_id) => {
-    let newRow = tagsData.filter((d) => d._id !== _id);
-    setTagsData(newRow);
-    gotoPageMeta(newRow);
+      let newRow = tagsData.filter((d) => d._id !== _id);
+      setTagsData(newRow);
+      gotoPageMeta(newRow);
   };
 
   const gotoPageMeta = (rowTag) => {
-    let withoutIDTag = rowTag.map((d) => {
-      return { name: d.name, value: d.value };
-    });
-    props.seteditObj({ ...props.editObj, metadata: withoutIDTag });
+      // let withoutIDTag = rowTag.map((d) => {
+      //   return { name: d.name, value: d.value };
+      // });
+      props.seteditObj({ ...props.editObj, metadata: rowTag });
   };
 
   return (
