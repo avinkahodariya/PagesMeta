@@ -12,6 +12,7 @@ import {
 import MainCardWrapper from "../components/MainCardWrapper";
 import AddEdit from "../page-components/applications/AddEdit";
 import "bootstrap/dist/css/bootstrap.css";
+import Router from "next/router";
 
 function Application() {
   const [model, setModel] = useState(false);
@@ -68,7 +69,12 @@ function Application() {
   };
 
   return (
-    <MainCardWrapper title="Add Applications">
+    <MainCardWrapper
+      title="Add Applications"
+      backTitle="Pages"
+      onClick={() => {
+        Router.push("/pages");
+      }}>
       <div className="w-100 text-right  py-2 px-0  d-flex justify-content-end">
         <Button
           variant="contained"

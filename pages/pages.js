@@ -13,6 +13,7 @@ import {
   UpdatePagesHook,
 } from "../hooks/pages";
 import "bootstrap/dist/css/bootstrap.css";
+import Router from "next/router";
 import AddEditPages from "../page-components/Pages/AddEditPages";
 
 const Pages = () => {
@@ -135,47 +136,55 @@ const Pages = () => {
   };
 
   return (
-    <MainCardWrapper title="Pages">
-      <p className="text-end mt-3">
-        <Button
-          variant="contained"
-          onClick={() => {
-            setModel(true);
+    <>
+      {" "}
+      <MainCardWrapper
+        title="Pages"
+        backTitle="Applications"
+        onClick={() => {
+          Router.push("/application");
+        }}>
+        <p className="text-end mt-3">
+          <Button
+            variant="contained"
+            onClick={() => {
+              setModel(true);
+            }}
+            className="rounded-0">
+            <AddBoxIcon className="" />
+            <span className="mx-2">Add Page</span>
+          </Button>
+        </p>
+        <div className="border card">
+          <BasicTable
+            rowsData={rowsData}
+            editRow={editRow}
+            deleteRow={deleteRow}
+          />
+        </div>
+        <AddEditPages
+          model={model}
+          setModel={() => {
+            setModel(false);
+            setEditModel(false);
           }}
-          className="rounded-0">
-          <AddBoxIcon className="" />
-          <span className="mx-2">Add Page</span>
-        </Button>
-      </p>
-      <div className="border card">
-        <BasicTable
+          handleEdit={handleEdit}
+          editObj={editObj}
+          applications={applications}
           rowsData={rowsData}
-          editRow={editRow}
-          deleteRow={deleteRow}
+          addNewPage={addNewPage}
+          editModel={editModel}
+          seteditObj={seteditObj}
         />
-      </div>
-      <AddEditPages
-        model={model}
-        setModel={() => {
-          setModel(false);
-          setEditModel(false);
-        }}
-        handleEdit={handleEdit}
-        editObj={editObj}
-        applications={applications}
-        rowsData={rowsData}
-        addNewPage={addNewPage}
-        editModel={editModel}
-        seteditObj={seteditObj}
-      />
-      <DeleteModel
-        open={deleteModel == "true" ? true : false}
-        onClose={setdeleteModel}
-        remove={() => {
-          deleteID && removePage(deleteID);
-        }}
-      />
-    </MainCardWrapper>
+        <DeleteModel
+          open={deleteModel == "true" ? true : false}
+          onClose={setdeleteModel}
+          remove={() => {
+            deleteID && removePage(deleteID);
+          }}
+        />
+      </MainCardWrapper>
+    </>
   );
 };
 
