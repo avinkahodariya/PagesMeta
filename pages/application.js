@@ -70,8 +70,7 @@ function Application() {
 
   return (
     <MainCardWrapper
-      title="Add Applications"
-      backTitle="Pages"
+      title="Applications"
       onClick={() => {
         Router.push("/pages");
       }}>

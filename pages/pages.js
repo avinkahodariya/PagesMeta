@@ -146,7 +146,6 @@ const Pages = () => {
       {" "}
       <MainCardWrapper
         title="Pages"
-        backTitle="Applications"
         onClick={() => {
           Router.push("/application");
         }}>

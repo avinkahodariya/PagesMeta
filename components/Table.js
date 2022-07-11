@@ -11,7 +11,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 export function BasicTable(props) {
 
   return (
-    <TableContainer style={{ maxHeight: "370px", overflow: "scroll" }} >
+    <TableContainer style={{ maxHeight: "470px", overflow: "scroll" }} >
       <Table style={{ minWidth: 650,}} aria-label="simple table">
         <TableHead className="bg-secondary   text-light position-sticky top-0">
           <TableRow className="text-light">

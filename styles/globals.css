@@ -30,3 +30,13 @@ a {
   border-radius: 5px;
   cursor: pointer;
 }
+
+.title-font{
+  font-size: 22px;
+    font-weight: 500;
+}
+.maincard-button{
+  margin-inline: 5px;
+  color: #6c757d;
+  border-color: #6c757d;
+}
