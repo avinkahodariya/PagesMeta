@@ -1,35 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { BasicTable } from "../components";
+import { BasicTable, LoaderBar } from "../components";
 import { Button } from "@mui/material";
 import { GetApplicationListHook } from "../hooks/application";
-import { DeleteModel } from "../components/DeleteModel";
-import { Notification } from "../components/Notification";
-import MainCardWrapper from "../components/MainCardWrapper";
+import { DeleteModal,Notification } from "../components";
 import AddBoxIcon from "@mui/icons-material/AddBox";
-import {
-  AddPageHook,
-  GetPagesListHook,
-  RemovePageHook,
-  UpdatePagesHook,
-} from "../hooks/pages";
+import { GetPagesListHook } from "../hooks/pages";
 import "bootstrap/dist/css/bootstrap.css";
-import Router from "next/router";
-import AddEditPages from "../page-components/Pages/AddEditPages";
-
+import { AddEditPages } from "../page-components";
+import { ProtectRoute } from "../context/user";
+import { PagesService } from "../utility/services";
 const Pages = () => {
   const [rowsData, SetRawData] = useState([]);
-  const [model, setModel] = useState(false);
+  const [modal, setModal] = useState(false);
   const [applications, setApplications] = useState([]);
-  const [editModel, setEditModel] = useState(false);
+  const [editModal, setEditModal] = useState(false);
   const [editObj, seteditObj] = useState({});
-  const [deleteModel, setdeleteModel] = useState("false");
-  const [deleteID, setDeleteID] = useState("");
-
-  const { data: pages, getPages } = GetPagesListHook();
+  const [deleteModal, setDeleteModal] = useState("false");
+  const [deleteId, setDeleteID] = useState("");
+  const [ loading, setLoading ] = useState(false);
+  const { data: pages, getPages,loading:dataLoading } = GetPagesListHook();
   const { data: applicationData } = GetApplicationListHook();
-  const { addPage } = AddPageHook();
-  const { updatePage } = UpdatePagesHook();
-  const { removePage } = RemovePageHook();
 
   useEffect(() => {
     let newData = pages.map((d) => {
@@ -79,24 +69,31 @@ const Pages = () => {
   }, [applicationData]);
 
   useEffect(() => {
-    if (!editModel) {
+    if (!editModal) {
       seteditObj({});
     }
-  }, [editModel, model]);
+  }, [editModal, modal]);
+  
+  useEffect(() => {
+    setLoading(dataLoading)
+  }, [dataLoading]);
 
   const editRow = (_id) => {
-    setEditModel(true);
-    setModel(true);
+    setEditModal(true);
+    setModal(true);
     let indexRow = rowsData.findIndex((data) => data._id == _id);
     indexRow >= 0 && seteditObj(rowsData[indexRow]);
   };
 
-  const deleteRow = (_id) => {
+  const deleteRow = async(_id) => {
     setDeleteID(_id);
-    setdeleteModel("true");
-    getPages();
+    setDeleteModal("true");
   };
 
+const removePage = async (id) => {
+  id && await PagesService.remove(id);
+  await getPages();
+}
   const handleEdit = (e, data) => {
     let obj = { ...editObj };
     if (data) {
@@ -114,14 +111,14 @@ const Pages = () => {
     });
   };
 
-  const addNewPage = async () => {
+  const addNewPage = async (values,meta) => {
     let obj = {
-      pageKey: editObj.pageName,
-      app: editObj.app._id,
-      parent: editObj.parent._id,
-      description: editObj.description || "",
-      metadata: editObj.metadata,
-      title: editObj.title || "",
+      pageKey: values?.pageName,
+      app: values?.applicationName._id,
+      parent: values?.parentPage?._id,
+      description: values?.description || "",
+      metadata: meta,
+      title: values?.title || "",
     };
    obj.metadata = obj.metadata.map((d) => {
        return {
@@ -129,35 +126,38 @@ const Pages = () => {
            value: d.value,
        };
    });
-    if (editModel) {
-      await updatePage(editObj._id, obj);
-      Notification("Page Updated");
+   setLoading(true)
+    if (editModal) {
+      await PagesService.update(editObj._id, obj).then((d) => {
+        if (d) {
+          Notification("Page Updated"); 
+          setLoading(false)
+        }
+      })
     } else {
-      await addPage(obj);
-      Notification("Page Added");
+      await PagesService.add(obj).then((d) => {
+        if (d) {
+          Notification("Page Added");
+          setLoading(false)
+        }
+      })
     }
-    setEditModel(false);
-    setModel(false);
+    setEditModal(false);
+    setModal(false);
     await getPages();
   };
 
   return (
     <>
-      {" "}
-      <MainCardWrapper
-        title="Pages"
-        onClick={() => {
-          Router.push("/application");
-        }}>
         <p className="text-end mt-3">
           <Button
             variant="contained"
             onClick={() => {
-              setModel(true);
+              setModal(true);
             }}
             className="rounded-0">
             <AddBoxIcon className="" />
-            <span className="mx-2">Add Page</span>
+            <span className="mx-2 ">Add Page</span>
           </Button>
         </p>
         <div className="border card">
@@ -167,28 +167,27 @@ const Pages = () => {
             deleteRow={deleteRow}
           />
         </div>
-        <AddEditPages
-          model={model}
-          setModel={() => {
-            setModel(false);
-            setEditModel(false);
+        {modal && <AddEditPages
+          modal={modal}
+          setModal={() => {
+            setModal(false);
+            setEditModal(false);
           }}
           handleEdit={handleEdit}
           editObj={editObj}
           applications={applications}
           rowsData={rowsData}
           addNewPage={addNewPage}
-          editModel={editModel}
+          editModal={editModal}
           seteditObj={seteditObj}
-        />
-        <DeleteModel
-          open={deleteModel == "true" ? true : false}
-          onClose={setdeleteModel}
-          remove={() => {
-            deleteID && removePage(deleteID);
-          }}
-        />
-      </MainCardWrapper>
+        />}
+        <DeleteModal
+          open={deleteModal == "true" ? true : false}
+          onClose={setDeleteModal}
+          remove={removePage}
+          loading={loading}
+          id={deleteId}
+         />
     </>
   );
 };

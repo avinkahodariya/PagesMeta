@@ -1,6 +1,5 @@
 import { APIPath } from '../constants'
 import { CRUDService } from './crud'
-
 class Applications extends CRUDService {
     constructor() {
         super(APIPath.applications)

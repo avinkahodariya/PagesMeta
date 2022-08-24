@@ -1,15 +1,26 @@
 import "../styles/globals.css";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
-import Router from "next/router";
-import React, { useEffect } from "react";
+import React from "react";
+import { AuthProvider, ProtectRoute } from "../context/user";
+import { SessionProvider } from "next-auth/react"
 
-function MyApp({ Component, pageProps }) {
+
+function MyApp({
+  Component,
+  pageProps: { session, ...pageProps },
+}) {
+
   return (
-    <>
+    <SessionProvider session={session}>
+    <AuthProvider>
+      <ProtectRoute>
       <ToastContainer />
       <Component {...pageProps} />
-    </>
+      </ProtectRoute>
+    </AuthProvider>
+    </SessionProvider>
+
   );
 }
 

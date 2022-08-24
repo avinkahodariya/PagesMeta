@@ -9,7 +9,7 @@ export class PageController {
   };
 
   static create = async (data) => {
-    result = await Page.create({
+   let result = await Page.create({
       ...data,
       isActive: true,
     });

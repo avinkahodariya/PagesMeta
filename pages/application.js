@@ -1,29 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@mui/material";
-import { DeleteModel } from "../components/DeleteModel";
-import { Notification } from "../components/Notification";
+import { Notification,DeleteModal } from "../components";
 import { ApplicationTable } from "../components/ApplicationTable";
 import {
-  AddApplication,
   GetApplicationListHook,
-  UpdateApplicationHook,
-  RemoveApplicationHook,
 } from "../hooks";
-import MainCardWrapper from "../components/MainCardWrapper";
-import AddEdit from "../page-components/applications/AddEdit";
 import "bootstrap/dist/css/bootstrap.css";
-import Router from "next/router";
+import { ApplicationsService } from '../utility/services';
+import { ProtectRoute } from "../context/user";
+import { AddEdit } from "../page-components/applications";
 
 function Application() {
-  const [model, setModel] = useState(false);
+  const [modal, setModal] = useState(false);
   const [tableData, setTableData] = useState([]);
   const [editObj, seteditObj] = useState({});
-  const [deleteModel, setdeleteModel] = useState("");
+  const [deleteModal, setDeleteModal] = useState("");
+  const [loading,setLoading] =useState(false)
 
   const { data, getApplication } = GetApplicationListHook();
-  const { InsertApp } = AddApplication();
-  const { update } = UpdateApplicationHook();
-  const { removeApplication } = RemoveApplicationHook();
 
   useEffect(() => {
     let formatedData = data?.map((d) => {
@@ -37,13 +31,13 @@ function Application() {
   }
 
   const editRow = (_id) => {
-    setModel(true);
+    setModal(true);
     let indexRow = tableData.findIndex((data) => data._id == _id);
     indexRow >= 0 && seteditObj(tableData[indexRow]);
   };
 
   const deleteRow = (_id) => {
-    setdeleteModel(_id);
+    setDeleteModal(_id);
   };
 
   const handleChange = (e) => {
@@ -52,65 +46,79 @@ function Application() {
     seteditObj({ ...obj });
   };
 
-  const addOrEdit = async () => {
+  const addOrEdit = async (values) => {
     let updateObj = {};
-    updateObj.name = editObj.name;
-    updateObj.description = editObj.description;
+    updateObj.name = values.name;
+    updateObj.description = values.description||'';
     if (editObj._id) {
-      await update(editObj._id, updateObj);
-      Notification("Application Updated");
+      setLoading(true)
+      await ApplicationsService.update(editObj._id, updateObj).then((data)=>{
+        if(data){ setLoading(false)
+          Notification("Application Updated");
+        }
+      })
     } else {
-      await InsertApp({ ...updateObj });
-      Notification("Application Added");
+      setLoading(true)
+      await ApplicationsService.add({ ...updateObj }).then((data)=>{
+        if(data) { 
+          setLoading(false)
+          Notification("Application Added");
+        }
+      })
     }
-    await getApplication();
-    setModel(false);
+    await getApplication()
+
+
+    setModal(false);
     seteditObj({});
   };
 
+  const remove =async () => {
+    await ApplicationsService.remove(deleteModal);
+    setDeleteModal(false);
+    setDeleteModal(false);
+    Notification("Application Deleted Sucessfully");
+    await getApplication();
+  }
+
   return (
-    <MainCardWrapper
-      title="Applications"
-      onClick={() => {
-        Router.push("/pages");
-      }}>
+    <>
       <div className="w-100 text-right  py-2 px-0  d-flex justify-content-end">
         <Button
           variant="contained"
           className="my-2 mx-0  px-5 rounded-0"
           onClick={() => {
-            setModel(true);
+            setModal(true);
             seteditObj({});
           }}>
           Add
         </Button>
       </div>
+      <div className="border card">
       <ApplicationTable
         rowsData={tableData}
         editRow={editRow}
         deleteRow={deleteRow}
       />
-      <AddEdit
-        model={model}
-        setModel={setModel}
+      </div>
+     {modal && <AddEdit
+        modal={modal}
+        setModal={()=>{
+          setModal(false)
+        }}
         editRow={editRow}
         deleteRow={deleteRow}
         editObj={editObj}
         handleChange={handleChange}
         addOrEdit={addOrEdit}
+        loading={loading}
+      />}
+      <DeleteModal
+        open={deleteModal}
+        onClose={setDeleteModal}
+        remove={remove}
       />
-      <DeleteModel
-        open={deleteModel}
-        onClose={setdeleteModel}
-        remove={async () => {
-          await removeApplication(deleteModel);
-          setdeleteModel(false);
-          setdeleteModel(false);
-          Notification("Application Deleted Sucessfully");
-          await getApplication();
-        }}
-      />
-    </MainCardWrapper>
+    </>
   );
 }
 
