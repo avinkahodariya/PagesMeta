@@ -15,7 +15,7 @@ export function HeaderBar() {
   const authContext = useAuth()
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    Router.push(`/${newValue}`)
+    Router.push(`${newValue}`)
   };
   return (
     <div className='d-flex flex-row align-items-center w-100 border border-bottom-1 d-flex justify-content-between'>
