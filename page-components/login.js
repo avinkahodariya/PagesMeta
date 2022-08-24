@@ -16,7 +16,7 @@ const LoginSchema = yup.object().shape({
 
 
 
-const LoginScreen = () => {
+export const LoginScreen = () => {
     const router = useRouter()
 
     const formik = useFormik({
@@ -92,4 +92,4 @@ const LoginScreen = () => {
     )
 }
 
-export default LoginScreen
+  

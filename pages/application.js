@@ -7,7 +7,6 @@ import {
 } from "../hooks";
 import "bootstrap/dist/css/bootstrap.css";
 import { ApplicationsService } from '../utility/services';
-import { ProtectRoute } from "../context/user";
 import { AddEdit } from "../page-components/applications";
 
 function Application() {

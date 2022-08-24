@@ -1,9 +1,9 @@
 import { Layout } from '../layout';
 import React,{ createContext,useState,useContext,useEffect,useMemo } from 'react'
-import LoginScreen from '../page-components/login';
 import { signOut } from "next-auth/react"
 import { signIn, useSession } from "next-auth/react";
 import { LoaderBar } from '../components';
+import { LoginScreen } from '../page-components';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
