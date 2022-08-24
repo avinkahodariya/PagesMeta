@@ -8,6 +8,7 @@ import {
 import "bootstrap/dist/css/bootstrap.css";
 import { ApplicationsService } from '../utility/services';
 import { AddEdit } from "../page-components/applications";
+import { ProtectRoute } from "../context/user";
 
 function Application() {
   const [modal, setModal] = useState(false);
@@ -81,7 +82,7 @@ function Application() {
   }
 
   return (
-    <>
+    <ProtectRoute>
       <div className="w-100 text-right  py-2 px-0  d-flex justify-content-end">
         <Button
           variant="contained"
@@ -117,7 +118,7 @@ function Application() {
         onClose={setDeleteModal}
         remove={remove}
       />
-    </>
+    </ProtectRoute>
   );
 }
 

@@ -148,7 +148,7 @@ const removePage = async (id) => {
   };
 
   return (
-    <>
+    <ProtectRoute>
         <p className="text-end mt-3">
           <Button
             variant="contained"
@@ -188,7 +188,7 @@ const removePage = async (id) => {
           loading={loading}
           id={deleteId}
          />
-    </>
+    </ProtectRoute>
   );
 };
 

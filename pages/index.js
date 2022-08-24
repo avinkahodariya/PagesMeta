@@ -7,7 +7,7 @@ useEffect(()=>{
   if(auth.isAuthenticated){
     Router.push('/pages')
   }else{
-    Router.push('')
+    Router.push('/login')
   }
 },[auth.isAuthenticated])
   return <AuthProvider></AuthProvider>

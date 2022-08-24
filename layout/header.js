@@ -8,14 +8,10 @@ import Divider from '@mui/material/Divider';
 import { Button } from '@mui/material';
 import Router from "next/router";
 import { useAuth } from '../context/user';
+import { useRouter } from 'next/router';
 export function HeaderBar() {
-
-  // const navigate = useNavigate()
-  // const logout = async () => {
-  //     await AuthService.logout()
-  //     navigate('/')
-  // }
-  const [value, setValue] = useState("pages");
+  const { asPath } = useRouter()
+  const [value, setValue] = useState(asPath);
   const authContext = useAuth()
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -33,9 +29,9 @@ export function HeaderBar() {
           aria-label="primary tabs example"
         >
           <Divider orientation="vertical" flexItem style={{ height: '49px' }} />
-            <Tab value="pages" label="Pages" />
+            <Tab value="/pages" label="Pages" />
           <Divider orientation="vertical" flexItem style={{ height: '49px' }} />
-            <Tab value="application" label="Application" />
+            <Tab value="/application" label="Application" />
         </Tabs>
       </div>
       <Button variant='contained' className='mx-3 bg-danger rounded-0' onClick={()=>{

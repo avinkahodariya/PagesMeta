@@ -14,10 +14,8 @@ function MyApp({
   return (
     <SessionProvider session={session}>
     <AuthProvider>
-      <ProtectRoute>
       <ToastContainer />
       <Component {...pageProps} />
-      </ProtectRoute>
     </AuthProvider>
     </SessionProvider>
 

@@ -3,9 +3,9 @@ import React,{ createContext,useState,useContext,useEffect,useMemo } from 'react
 import { signOut } from "next-auth/react"
 import { signIn, useSession } from "next-auth/react";
 import { LoaderBar } from '../components';
-import { LoginScreen } from '../page-components';
+import Router, { useRouter } from 'next/router';
+import { replace } from 'formik';
 const AuthContext = createContext();
-
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated,setIsAuthenticated] = useState(null);
     const [user,setUser] = useState(null);
@@ -36,8 +36,8 @@ export const AuthProvider = ({ children }) => {
             redirect: false,
             email: data.email,
             password: data.password,
-            callbackUrl: 'http://localhost:3000/pages'
         });
+        Router.push("/pages")
         setIsAuthenticated(true);
     }
 
@@ -68,16 +68,16 @@ export const ProtectRoute = ({
     children,
 }) => {
     const { isAuthenticated,loading,status } = useAuth();
-    console.log("🚀 ~ file: user.js ~ line 71 ~ status", status)
+    const { replace } = useRouter()
 
     if(status=="loading") {
         return <LoaderBar/>
     }
 
     if (status=="unauthenticated") {
-        return <LoginScreen />
+        replace("/login")
     }
-
+ 
     return (
         <Layout>
         {children}
