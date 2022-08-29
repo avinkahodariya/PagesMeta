@@ -52,6 +52,7 @@ export const AddEditPages = ({
           initialValues={{
             pageName: editObj?.pageName || "",
             title: editObj?.title || "",
+            description: editObj.description || "",
             applicationName: {
               value: editObj?.app?.name || "",
               label: editObj?.app?.name || "",

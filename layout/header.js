@@ -18,7 +18,7 @@ export function HeaderBar() {
     Router.push(`${newValue}`)
   };
   return (
-    <div className='d-flex flex-row align-items-center w-100 border border-bottom-1 d-flex justify-content-between'>
+    <div className='d-flex flex-row align-items-center w-100 border border-bottom-1 d-flex justify-content-between header-fix'>
       <div className='d-flex flex-row align-items-center font'>
         <h5 className='mx-3'>PagesMeta</h5>
         <Tabs

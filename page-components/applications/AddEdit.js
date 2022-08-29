@@ -65,7 +65,8 @@ export const AddEdit = ({ modal, setModal, editObj, handleChange, addOrEdit ,loa
                       type="submit"
                       disabled={loading}
                       >
-                    { editObj.id ? "Save" : "add"}{loading && <LoaderBar/>}
+                          {editObj.name ? "Save" : "Add"}
+                          {loading && <LoaderBar />}
                   </Button>
               </div>
               </form>

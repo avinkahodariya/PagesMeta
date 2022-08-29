@@ -31,13 +31,15 @@ export const AuthProvider = ({ children }) => {
     }
 
     const login = (data) => {
+        if (data.email && data.password) {
         signIn('credentials', {
-            redirect: false,
+            redirect: true,
             email: data.email,
             password: data.password,
-            callbackUrl: 'http://localhost:3000/pages'
         });
+        Router.push("/pages")
         setIsAuthenticated(true);
+    }
     }
 
     const logout = () => {
@@ -75,8 +77,6 @@ export const ProtectRoute = ({
     if (status=="unauthenticated") {
         return <LoginScreen />
     }
-
-
 
     return (
         <Layout>

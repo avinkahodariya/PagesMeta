@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import * as yup from 'yup'
-import {useRouter} from "next/router";
+import Router, { useRouter } from "next/router";
 import { Button, TextField } from '@mui/material';
 import { useFormik } from "formik";
 import "bootstrap/dist/css/bootstrap.css";
 import { signIn } from 'next-auth/react';
 import { LoaderBar } from '../components';
 import { useAuth } from '../context/user';
+// import { useAuth } from 'context/user';
 
 
 const LoginSchema = yup.object().shape({
@@ -43,6 +44,7 @@ const LoginSchema = yup.object().shape({
         });
         if(result.status==200){
             authContext.login(result)
+            Router.push("/pages")
             setError(false)
         }else{
             setError("*Invalid username and/or password")

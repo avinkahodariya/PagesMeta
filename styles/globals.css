@@ -73,3 +73,9 @@ a {
   display: flex;
   align-items: center;
 }
+.header-fix {
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  background: white;
+}
